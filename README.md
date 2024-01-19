@@ -1,2 +1,2 @@
-# solid-app
-A Flutter mobile client for the Solid app
+# Solid App
+Mobile client for Solid app
