@@ -34,8 +34,8 @@ Map<String, dynamic> _$CalendarRecordToJson(CalendarRecord instance) =>
     };
 
 EntryRecord _$EntryRecordFromJson(Map<String, dynamic> json) => EntryRecord(
-      title: json['title'] as String? ?? '',
-      textContent: json['textContent'] as String? ?? '',
+      textContent: json['text_content'] as String? ?? '',
+      calendar: json['calendar'] as String? ?? '',
     )
       ..id = json['id'] as String
       ..created = json['created'] as String
@@ -50,8 +50,8 @@ Map<String, dynamic> _$EntryRecordToJson(EntryRecord instance) =>
       'updated': instance.updated,
       'collectionId': instance.collectionId,
       'collectionName': instance.collectionName,
-      'title': instance.title,
-      'textContent': instance.textContent,
+      'text_content': instance.textContent,
+      'calendar': instance.calendar,
     };
 
 UserRecord _$UserRecordFromJson(Map<String, dynamic> json) => UserRecord(

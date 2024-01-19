@@ -19,7 +19,6 @@ class HomeScreen extends StatelessWidget {
         } else if (snapshot.hasError) {
           return const Center(child: Text("There was an error"),);
         } else if (snapshot.hasData) {
-          // return const CalendarsScreen();
           return Provider<UserRecord>(
             create: (context) => snapshot.data!,
             child: const CalendarsScreen(),

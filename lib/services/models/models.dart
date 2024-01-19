@@ -21,15 +21,22 @@ class CalendarRecord extends RecordModel {
 
 @JsonSerializable()
 class EntryRecord extends RecordModel {
-  final String title;
-  final DateTime date;
+  // final String title;
+  // final DateTime date;
+  @JsonKey(name: 'text_content')
   final String textContent;
+  final String calendar;
 
+  // EntryRecord({
+  //   this.title = '',
+  //   DateTime? dateOfBirth,
+  //   this.textContent = '',
+  // }) : date = dateOfBirth ?? DateTime.now(), super();
   EntryRecord({
-    this.title = '',
-    DateTime? dateOfBirth,
+    // this.title = '',
     this.textContent = '',
-  }) : date = dateOfBirth ?? DateTime.now(), super();
+    this.calendar = '',
+  }) : super();
 
   factory EntryRecord.fromJson(Map<String, dynamic> json) => _$EntryRecordFromJson(json);
   @override

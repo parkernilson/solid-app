@@ -30,17 +30,21 @@ class _LoginScreenState extends State<LoginScreen> {
             const FlutterLogo(
               size: 150
             ),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email'
-              ),
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password'
-              ),
+            Column(
+              children: [
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email'
+                  ),
+                ),
+                TextField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password'
+                  ),
+                ),
+              ],
             ),
             // button to perform login
             ElevatedButton(
