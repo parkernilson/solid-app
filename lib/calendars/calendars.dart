@@ -68,8 +68,8 @@ class CalendarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: EntryService(client: PocketBaseApp().pb).getEntries(calendarId: calendar.id),
+    return StreamBuilder(
+      stream: EntryService.instance.getEntriesStream(calendarId: calendar.id),
       builder:(context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LoadingScreen();
