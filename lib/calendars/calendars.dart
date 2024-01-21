@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:solid_app/services/entries.dart';
-import 'package:solid_app/pocketbase/pocketbase.dart';
 import 'package:solid_app/services/auth.dart';
 import 'package:solid_app/services/calendars.dart';
 import 'package:solid_app/services/models/models.dart';
@@ -36,20 +35,47 @@ class CalendarsScreen extends StatelessWidget {
               return const Center(child: Text("There was an error"),);
             } else if (snapshot.hasData) {
               final calendars = snapshot.data as List<CalendarRecord>;
-              return ListView.builder(
-                itemCount: calendars.length,
-                itemBuilder: (context, index) {
-                  final calendar = calendars[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarScreen(calendar: calendar)));
-                    },
-                    child: ListTile(
-                      title: Text(calendar.title),
-                      subtitle: Text(calendar.id),
-                    )
-                  );
-                }
+              final myCalendars = calendars.where((element) => element.owner == user.id).toList();
+              final sharedWithMeCalendars = calendars.where((element) => element.viewers.contains(user.id)).toList();
+              return Column(
+                children: [
+                  const Text('My Calendars'),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: myCalendars.length,
+                      itemBuilder: (context, index) {
+                        final calendar = myCalendars[index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarScreen(calendar: calendar)));
+                          },
+                          child: ListTile(
+                            title: Text(calendar.title),
+                            subtitle: Text(calendar.id),
+                          )
+                        );
+                      }
+                    ),
+                  ),
+                  const Text('Shared with me'),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: sharedWithMeCalendars.length,
+                      itemBuilder: (context, index) {
+                        final calendar = sharedWithMeCalendars[index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarScreen(calendar: calendar)));
+                          },
+                          child: ListTile(
+                            title: Text(calendar.title),
+                            subtitle: Text(calendar.id),
+                          )
+                        );
+                      }
+                    ),
+                  ),
+                ]
               );
             } else {
               return const Center(child: Text("There was an error"),);
@@ -77,7 +103,7 @@ class CalendarScreen extends StatelessWidget {
           print(snapshot.error?.toString());
           return const Center(child: Text("There was an error"));
         } else if (snapshot.hasData) {
-          final entries = snapshot.data as List<EntryRecord>;
+          final entries = (snapshot.data as List<EntryRecord>)..sort((a, b) => -DateTime.parse(a.created).compareTo(DateTime.parse(b.created)));
           return Scaffold(
             appBar: AppBar(
               title: Text(calendar.title),
@@ -91,7 +117,8 @@ class CalendarScreen extends StatelessWidget {
                     // Navigator.push(context, MaterialPageRoute(builder: (context) => EntryScreen(entry: entry)));
                   },
                   child: ListTile(
-                    title: Text(entry.id),
+                    title: Text(entry.textContent),
+                    subtitle: Text(entry.dateFormatted),
                   )
                 );
               }
