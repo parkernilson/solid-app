@@ -43,4 +43,16 @@ class EntryService {
 
     yield* streamController.stream;
   }
+
+  Future<EntryRecord> createEntry({ required String textContent, required String calendar }) async {
+    final result = await client.collection('entries').create(body: {
+      'text_content': textContent,
+      'calendar': calendar
+    });
+    return EntryRecord.fromJson(result.toJson());
+  }
+
+  Future<void> deleteEntry({ required String id }) async {
+    await client.collection('entries').delete(id);
+  }
 }

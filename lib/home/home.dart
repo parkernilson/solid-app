@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:solid_app/calendars/calendars.dart';
+import 'package:solid_app/calendars/calendar_list_screen.dart';
 import 'package:solid_app/services/auth.dart';
 import 'package:solid_app/services/models/models.dart';
 import 'package:solid_app/shared/loading.dart';
