@@ -1,8 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:pocketbase/pocketbase.dart';
 import 'package:solid_app/pocketbase/pocketbase.dart';
 import 'package:solid_app/services/models/models.dart';
+import 'package:http/http.dart' as http;
+
+class SendShareRequestResponse {
+  final bool success;
+  SendShareRequestResponse({ required bool this.success });
+}
 
 class CalendarService {
   late PocketBase client;
@@ -58,6 +65,24 @@ class CalendarService {
 
   Future<void> deleteCalendar({ required String id }) async {
     await client.collection('calendars').delete(id);
+  }
+
+  Future<SendShareRequestResponse> sendShareRequest({ required String calendarId, required String shareWithEmail }) async {
+    // TODO: use correct url depending on environment
+    final shareRequestUrl = Uri.http('localhost:3000', 'api/calendars/share/send');
+    final pbToken = PocketBaseApp().pb.authStore.token;
+
+    final body = json.encode({
+      'calendarId': calendarId,
+      'shareWithEmail': shareWithEmail
+    });
+
+    final result = await http.post(shareRequestUrl, headers: {
+      'Authorization': 'Bearer $pbToken',
+      'Content-Type': 'application/json'
+    }, body: body);
+
+    return SendShareRequestResponse(success: result.statusCode == 200);
   }
 
 }

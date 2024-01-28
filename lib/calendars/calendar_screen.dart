@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solid_app/calendars/create_entry_modal.dart';
+import 'package:solid_app/services/calendars.dart';
 import 'package:solid_app/services/entries.dart';
 import 'package:solid_app/services/models/models.dart';
 import 'package:solid_app/shared/loading.dart';
@@ -54,7 +55,13 @@ class CalendarScreen extends StatelessWidget {
                   ),
                   ListTile(
                       title: const Text('Share'),
-                      onTap: () {
+                      onTap: () async {
+                        try {
+                          final result = await CalendarService.instance.sendShareRequest(calendarId: calendar.id, shareWithEmail: 'parker.todd.nilson@gmail.com');
+                          print('email send success: ${result.success}');
+                        } catch(error) {
+                          print(error);
+                        }
                         Navigator.pop(context);
                       })
                 ])),
