@@ -4,21 +4,49 @@ import 'package:pocketbase/pocketbase.dart';
 part 'models.g.dart';
 
 @JsonSerializable()
+class ShareRecord extends RecordModel {
+  final List<String> viewers;
+
+  ShareRecord({this.viewers = const []}) : super();
+
+  factory ShareRecord.fromJson(Map<String, dynamic> json) =>
+      _$ShareRecordFromJson(json);
+  @override
+
+  factory ShareRecord.fromRecordModel(RecordModel record) =>
+      ShareRecord.fromJson(record.toJson());
+
+  Map<String, dynamic> toJson() => _$ShareRecordToJson(this);
+}
+
+@JsonSerializable()
 class CalendarRecord extends RecordModel {
   final String title;
   final String owner;
-  final List<String> viewers;
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  ShareRecord shareRecord;
 
   CalendarRecord({
     this.title = '',
     this.owner = '',
-    this.viewers = const [],
-  }) : super();
+  })  : shareRecord = ShareRecord(),
+        super();
 
   factory CalendarRecord.fromJson(Map<String, dynamic> json) =>
-      _$CalendarRecordFromJson(json);
+      _$CalendarRecordFromJson(json)
+        ..shareRecord = json['expand']?['share_record'] != null
+            ? ShareRecord.fromJson(json['expand']?['share_record'])
+            : ShareRecord();
+
+  factory CalendarRecord.fromRecordModel(RecordModel record) =>
+      CalendarRecord.fromJson(record.toJson());
+
   @override
-  Map<String, dynamic> toJson() => _$CalendarRecordToJson(this);
+  Map<String, dynamic> toJson() => _$CalendarRecordToJson(this)
+    ..['expand'] = {
+      'share_record': shareRecord.toJson(),
+    };
 }
 
 @JsonSerializable()
@@ -45,8 +73,10 @@ class EntryRecord extends RecordModel {
   @override
   Map<String, dynamic> toJson() => _$EntryRecordToJson(this);
 
-  String get dateFormatted => DateTime.tryParse(created) is DateTime ? DateFormat(DateFormat.ABBR_MONTH_WEEKDAY_DAY)
-      .format(DateTime.tryParse(created)!) : 'Invalid date';
+  String get dateFormatted => DateTime.tryParse(created) is DateTime
+      ? DateFormat(DateFormat.ABBR_MONTH_WEEKDAY_DAY)
+          .format(DateTime.tryParse(created)!)
+      : 'Invalid date';
 }
 
 @JsonSerializable()

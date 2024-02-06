@@ -24,7 +24,7 @@ class CreateCalendarModal extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               try {
-                await CalendarService.instance.createCalendar(
+                await CalendarService().createCalendar(
                     title: titleController.text, owner: user.id);
                 if (context.mounted) Navigator.pop(context);
               } catch (e) {

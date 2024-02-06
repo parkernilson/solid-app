@@ -6,14 +6,32 @@ part of 'models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CalendarRecord _$CalendarRecordFromJson(Map<String, dynamic> json) =>
-    CalendarRecord(
-      title: json['title'] as String? ?? '',
-      owner: json['owner'] as String? ?? '',
+ShareRecord _$ShareRecordFromJson(Map<String, dynamic> json) => ShareRecord(
       viewers: (json['viewers'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
+    )
+      ..id = json['id'] as String
+      ..created = json['created'] as String
+      ..updated = json['updated'] as String
+      ..collectionId = json['collectionId'] as String
+      ..collectionName = json['collectionName'] as String;
+
+Map<String, dynamic> _$ShareRecordToJson(ShareRecord instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'created': instance.created,
+      'updated': instance.updated,
+      'collectionId': instance.collectionId,
+      'collectionName': instance.collectionName,
+      'viewers': instance.viewers,
+    };
+
+CalendarRecord _$CalendarRecordFromJson(Map<String, dynamic> json) =>
+    CalendarRecord(
+      title: json['title'] as String? ?? '',
+      owner: json['owner'] as String? ?? '',
     )
       ..id = json['id'] as String
       ..created = json['created'] as String
@@ -30,7 +48,6 @@ Map<String, dynamic> _$CalendarRecordToJson(CalendarRecord instance) =>
       'collectionName': instance.collectionName,
       'title': instance.title,
       'owner': instance.owner,
-      'viewers': instance.viewers,
     };
 
 EntryRecord _$EntryRecordFromJson(Map<String, dynamic> json) => EntryRecord(

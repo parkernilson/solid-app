@@ -28,7 +28,7 @@ class CalendarsScreen extends StatelessWidget {
         body: Container(
             padding: const EdgeInsets.all(30),
             child: StreamBuilder(
-              stream: CalendarService.instance.getCalendarsStream(),
+              stream: CalendarService().getCalendarsStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const LoadingScreen();
@@ -42,7 +42,7 @@ class CalendarsScreen extends StatelessWidget {
                       .where((element) => element.owner == user.id)
                       .toList();
                   final sharedWithMeCalendars = calendars
-                      .where((element) => element.viewers.contains(user.id))
+                      .where((element) => element.shareRecord.viewers.contains(user.id))
                       .toList();
                   final items = [
                     'My Calendars',
@@ -73,7 +73,7 @@ class CalendarsScreen extends StatelessWidget {
                                 icon: const Icon(Icons.delete),
                                 onPressed: () async {
                                   try {
-                                    await CalendarService.instance
+                                    await CalendarService()
                                         .deleteCalendar(id: item.id);
                                   } catch (e) {
                                     print(e);
