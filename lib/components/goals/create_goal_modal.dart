@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:solid_app/services/calendars.dart';
-import 'package:solid_app/services/models/models.dart';
+import 'package:solid_app/services/goals.dart';
+import 'package:solid_app/models/models.dart';
 
-class CreateCalendarModal extends StatelessWidget {
+class CreateGoalModal extends StatelessWidget {
   final UserRecord user;
 
-  const CreateCalendarModal({super.key, required this.user});
+  const CreateGoalModal({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class CreateCalendarModal extends StatelessWidget {
       padding: const EdgeInsets.all(30),
       child: Column(
         children: [
-          const Text('Create Calendar'),
+          const Text('Create Goal'),
           TextFormField(
             controller: titleController,
             decoration: const InputDecoration(
@@ -24,7 +24,7 @@ class CreateCalendarModal extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               try {
-                await CalendarService().createCalendar(
+                await GoalService().createGoal(
                     title: titleController.text, owner: user.id);
                 if (context.mounted) Navigator.pop(context);
               } catch (e) {

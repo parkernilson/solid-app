@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:solid_app/services/entries.dart';
-import 'package:solid_app/services/models/models.dart';
+import 'package:solid_app/models/models.dart';
 
 class CreateEntryModal extends StatelessWidget {
   final UserRecord user;
-  final CalendarRecord calendar;
+  final GoalRecord goal;
 
-  const CreateEntryModal({super.key, required this.user, required this.calendar});
+  const CreateEntryModal({super.key, required this.user, required this.goal});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class CreateEntryModal extends StatelessWidget {
             onPressed: () async {
               try {
                 await EntryService.instance.createEntry(
-                    textContent: contentController.text, calendar: calendar.id);
+                    textContent: contentController.text, goal: goal.id);
                 if (context.mounted) Navigator.pop(context);
               } catch (e) {
                 print(e);

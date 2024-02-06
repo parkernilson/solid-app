@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:pocketbase/pocketbase.dart';
-import 'package:solid_app/pocketbase/pocketbase.dart';
-import 'package:solid_app/services/models/models.dart';
+import 'package:solid_app/services/pocketbase/pocketbase.dart';
+import 'package:solid_app/models/models.dart';
 
 class EntryService {
   late PocketBase client;
@@ -11,20 +11,20 @@ class EntryService {
 
   static EntryService instance = EntryService(client: PocketBaseApp().pb);
 
-  Future<List<EntryRecord>> getEntries({ required String calendarId }) async {
-    final entries = await client.collection('entries').getFullList(filter: "calendar = '$calendarId'");
+  Future<List<EntryRecord>> getEntries({ required String goalId }) async {
+    final entries = await client.collection('entries').getFullList(filter: "goal = '$goalId'");
     return entries.map((e) => EntryRecord.fromJson(e.toJson())).toList();
   }
 
-  Stream<List<EntryRecord>> getEntriesStream({ required String calendarId }) async* {
+  Stream<List<EntryRecord>> getEntriesStream({ required String goalId }) async* {
     final streamController = StreamController<List<EntryRecord>>();
-    List<EntryRecord> list = await getEntries(calendarId: calendarId);
+    List<EntryRecord> list = await getEntries(goalId: goalId);
     yield list;
 
     client.collection('entries').subscribe(
       "*", (e) {
         final entryRecord = EntryRecord.fromJson(e.record!.toJson());
-        if (entryRecord.calendar != calendarId) return;
+        if (entryRecord.goal != goalId) return;
 
         switch(e.action) {
           case 'create':
@@ -44,10 +44,10 @@ class EntryService {
     yield* streamController.stream;
   }
 
-  Future<EntryRecord> createEntry({ required String textContent, required String calendar }) async {
+  Future<EntryRecord> createEntry({ required String textContent, required String goal }) async {
     final result = await client.collection('entries').create(body: {
       'text_content': textContent,
-      'calendar': calendar
+      'goal': goal
     });
     return EntryRecord.fromJson(result.toJson());
   }

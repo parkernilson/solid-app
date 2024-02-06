@@ -20,30 +20,30 @@ class ShareRecord extends RecordModel {
 }
 
 @JsonSerializable()
-class CalendarRecord extends RecordModel {
+class GoalRecord extends RecordModel {
   final String title;
   final String owner;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   ShareRecord shareRecord;
 
-  CalendarRecord({
+  GoalRecord({
     this.title = '',
     this.owner = '',
   })  : shareRecord = ShareRecord(),
         super();
 
-  factory CalendarRecord.fromJson(Map<String, dynamic> json) =>
-      _$CalendarRecordFromJson(json)
+  factory GoalRecord.fromJson(Map<String, dynamic> json) =>
+      _$GoalRecordFromJson(json)
         ..shareRecord = json['expand']?['share_record'] != null
             ? ShareRecord.fromJson(json['expand']?['share_record'])
             : ShareRecord();
 
-  factory CalendarRecord.fromRecordModel(RecordModel record) =>
-      CalendarRecord.fromJson(record.toJson());
+  factory GoalRecord.fromRecordModel(RecordModel record) =>
+      GoalRecord.fromJson(record.toJson());
 
   @override
-  Map<String, dynamic> toJson() => _$CalendarRecordToJson(this)
+  Map<String, dynamic> toJson() => _$GoalRecordToJson(this)
     ..['expand'] = {
       'share_record': shareRecord.toJson(),
     };
@@ -55,7 +55,7 @@ class EntryRecord extends RecordModel {
   // final DateTime date;
   @JsonKey(name: 'text_content')
   final String textContent;
-  final String calendar;
+  final String goal;
 
   // EntryRecord({
   //   this.title = '',
@@ -65,7 +65,7 @@ class EntryRecord extends RecordModel {
   EntryRecord({
     // this.title = '',
     this.textContent = '',
-    this.calendar = '',
+    this.goal = '',
   }) : super();
 
   factory EntryRecord.fromJson(Map<String, dynamic> json) =>

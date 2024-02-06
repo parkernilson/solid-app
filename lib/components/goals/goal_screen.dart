@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:solid_app/calendars/create_entry_modal.dart';
-import 'package:solid_app/services/calendars.dart';
+import 'package:solid_app/components/goals/create_entry_modal.dart';
+import 'package:solid_app/services/goals.dart';
 import 'package:solid_app/services/entries.dart';
-import 'package:solid_app/services/models/models.dart';
+import 'package:solid_app/models/models.dart';
 import 'package:solid_app/shared/loading.dart';
 
-class CalendarScreen extends StatelessWidget {
-  final CalendarRecord calendar;
+class GoalScreen extends StatelessWidget {
+  final GoalRecord goal;
   final UserRecord user;
 
-  const CalendarScreen({super.key, required this.calendar, required this.user});
+  const GoalScreen({super.key, required this.goal, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: CalendarService().getCalendarsStream(),
+      stream: GoalService().getGoalsStream(),
       builder: (context, snapshot) {
         return StreamBuilder(
-          stream: EntryService.instance.getEntriesStream(calendarId: calendar.id),
+          stream: EntryService.instance.getEntriesStream(goalId: goal.id),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const LoadingScreen();
@@ -29,15 +29,15 @@ class CalendarScreen extends StatelessWidget {
                 ..sort((a, b) => -DateTime.parse(a.created)
                     .compareTo(DateTime.parse(b.created)));
       
-              final shareText = calendar.owner == user.id
-                  ? 'Shared with ${calendar.shareRecord.viewers.length} people'
+              final shareText = goal.owner == user.id
+                  ? 'Shared with ${goal.shareRecord.viewers.length} people'
                   : 'Shared with you';
       
               return Scaffold(
                   appBar: AppBar(
                     title: Column(
                       children: [
-                        Text(calendar.title),
+                        Text(goal.title),
                         Text(shareText, style: const TextStyle(fontSize: 12))
                       ],
                     ),
@@ -70,9 +70,9 @@ class CalendarScreen extends StatelessWidget {
                         title: const Text('Share'),
                         // onTap: () async {
                         //   try {
-                        //     final result = await CalendarService()
+                        //     final result = await GoalService()
                         //         .sendShareRequest(
-                        //             calendarId: calendar.id,
+                        //             goalId: goal.id,
                         //             shareWithEmail:
                         //                 'parker.todd.nilson@gmail.com');
                         //     print('email send success: ${result.success}');
@@ -86,15 +86,15 @@ class CalendarScreen extends StatelessWidget {
                     const ListTile(
                       title: Text('Shared with'),
                     ),
-                    ...calendar.shareRecord.viewers.map((viewer) {
+                    ...goal.shareRecord.viewers.map((viewer) {
                       return ListTile(
                         title: Text(viewer),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () async {
                             try {
-                              await CalendarService().unshareWithUser(
-                                  calendarId: calendar.id, userId: viewer);
+                              await GoalService().unshareWithUser(
+                                  goalId: goal.id, userId: viewer);
                             } catch (e) {
                               print(e);
                             }
@@ -135,7 +135,7 @@ class CalendarScreen extends StatelessWidget {
                           context: context,
                           builder: (context) {
                             return CreateEntryModal(
-                                user: user, calendar: calendar);
+                                user: user, goal: goal);
                           });
                     },
                     child: const Icon(Icons.add),

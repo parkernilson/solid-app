@@ -28,8 +28,8 @@ Map<String, dynamic> _$ShareRecordToJson(ShareRecord instance) =>
       'viewers': instance.viewers,
     };
 
-CalendarRecord _$CalendarRecordFromJson(Map<String, dynamic> json) =>
-    CalendarRecord(
+GoalRecord _$GoalRecordFromJson(Map<String, dynamic> json) =>
+    GoalRecord(
       title: json['title'] as String? ?? '',
       owner: json['owner'] as String? ?? '',
     )
@@ -39,7 +39,7 @@ CalendarRecord _$CalendarRecordFromJson(Map<String, dynamic> json) =>
       ..collectionId = json['collectionId'] as String
       ..collectionName = json['collectionName'] as String;
 
-Map<String, dynamic> _$CalendarRecordToJson(CalendarRecord instance) =>
+Map<String, dynamic> _$GoalRecordToJson(GoalRecord instance) =>
     <String, dynamic>{
       'id': instance.id,
       'created': instance.created,
@@ -52,7 +52,7 @@ Map<String, dynamic> _$CalendarRecordToJson(CalendarRecord instance) =>
 
 EntryRecord _$EntryRecordFromJson(Map<String, dynamic> json) => EntryRecord(
       textContent: json['text_content'] as String? ?? '',
-      calendar: json['calendar'] as String? ?? '',
+      goal: json['goal'] as String? ?? '',
     )
       ..id = json['id'] as String
       ..created = json['created'] as String
@@ -68,7 +68,7 @@ Map<String, dynamic> _$EntryRecordToJson(EntryRecord instance) =>
       'collectionId': instance.collectionId,
       'collectionName': instance.collectionName,
       'text_content': instance.textContent,
-      'calendar': instance.calendar,
+      'goal': instance.goal,
     };
 
 UserRecord _$UserRecordFromJson(Map<String, dynamic> json) => UserRecord(

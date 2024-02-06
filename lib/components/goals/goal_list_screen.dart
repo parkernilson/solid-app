@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:solid_app/calendars/calendar_screen.dart';
-import 'package:solid_app/calendars/create_calendar_modal.dart';
+import 'package:solid_app/components/goals/goal_screen.dart';
+import 'package:solid_app/components/goals/create_goal_modal.dart';
 import 'package:solid_app/services/auth.dart';
-import 'package:solid_app/services/calendars.dart';
-import 'package:solid_app/services/models/models.dart';
+import 'package:solid_app/services/goals.dart';
+import 'package:solid_app/models/models.dart';
 import 'package:provider/provider.dart';
 import 'package:solid_app/shared/loading.dart';
 
-class CalendarsScreen extends StatelessWidget {
-  const CalendarsScreen({super.key});
+class GoalsScreen extends StatelessWidget {
+  const GoalsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserRecord>();
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Calendars'),
+          title: const Text('Goals'),
           actions: [
             IconButton(
               icon: const Icon(Icons.logout),
@@ -28,7 +28,7 @@ class CalendarsScreen extends StatelessWidget {
         body: Container(
             padding: const EdgeInsets.all(30),
             child: StreamBuilder(
-              stream: CalendarService().getCalendarsStream(),
+              stream: GoalService().getGoalsStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const LoadingScreen();
@@ -37,18 +37,18 @@ class CalendarsScreen extends StatelessWidget {
                     child: Text("There was an error"),
                   );
                 } else if (snapshot.hasData) {
-                  final calendars = snapshot.data as List<CalendarRecord>;
-                  final myCalendars = calendars
+                  final goals = snapshot.data as List<GoalRecord>;
+                  final myGoals = goals
                       .where((element) => element.owner == user.id)
                       .toList();
-                  final sharedWithMeCalendars = calendars
+                  final sharedWithMeGoals = goals
                       .where((element) => element.shareRecord.viewers.contains(user.id))
                       .toList();
                   final items = [
-                    'My Calendars',
-                    ...myCalendars,
+                    'My Goals',
+                    ...myGoals,
                     'Shared with me',
-                    ...sharedWithMeCalendars
+                    ...sharedWithMeGoals
                   ];
                   return ListView.builder(
                     itemCount: items.length,
@@ -58,14 +58,14 @@ class CalendarsScreen extends StatelessWidget {
                         return ListTile(
                           title: Text(item, textScaler: const TextScaler.linear(2)),
                         );
-                      } else if (item is CalendarRecord) {
+                      } else if (item is GoalRecord) {
                         return InkWell(
                             onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          CalendarScreen(calendar: item, user: user)));
+                                          GoalScreen(goal: item, user: user)));
                             },
                             child: ListTile(
                               title: Text(item.title),
@@ -73,8 +73,8 @@ class CalendarsScreen extends StatelessWidget {
                                 icon: const Icon(Icons.delete),
                                 onPressed: () async {
                                   try {
-                                    await CalendarService()
-                                        .deleteCalendar(id: item.id);
+                                    await GoalService()
+                                        .deleteGoal(id: item.id);
                                   } catch (e) {
                                     print(e);
                                   }
@@ -101,7 +101,7 @@ class CalendarsScreen extends StatelessWidget {
             showModalBottomSheet(
                 context: context,
                 builder: (context) {
-                  return CreateCalendarModal(user: user);
+                  return CreateGoalModal(user: user);
                 });
           },
           child: const Icon(Icons.add),
