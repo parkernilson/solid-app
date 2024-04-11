@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:solid_app/services/auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -39,7 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Center(
                           child: Text('SOLID',
-                              style: TextStyle(fontFamily: 'OpenSans', fontSize: 42))),
+                              style: TextStyle(
+                                  fontFamily: 'OpenSans', fontSize: 42))),
                     ],
                   ),
                   Column(
@@ -59,8 +61,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ElevatedButton(
                       onPressed: () async {
                         try {
-                          await AuthService().login(
-                              emailController.text, passwordController.text);
+                          final email = dotenv.get('DEV_SOLID_EMAIL',
+                              fallback: emailController.text);
+                          final password = dotenv.get('DEV_SOLID_PASSWORD',
+                              fallback: passwordController.text);
+                          await AuthService().login(email, password);
                         } catch (e) {
                           print(e);
                         }
