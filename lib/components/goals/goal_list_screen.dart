@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:solid_app/components/goals/goal_screen.dart';
 import 'package:solid_app/components/goals/create_goal_modal.dart';
 import 'package:solid_app/services/auth.dart';
@@ -37,65 +38,14 @@ class GoalsScreen extends StatelessWidget {
                     child: Text("There was an error"),
                   );
                 } else if (snapshot.hasData) {
-                  final goals = snapshot.data as List<GoalRecord>;
-                  final myGoals = goals
-                      .where((element) => element.owner == user.id)
-                      .toList();
-                  final sharedWithMeGoals = goals
-                      .where((element) => element.shareRecord.viewers.contains(user.id))
-                      .toList();
-                  final items = [
-                    'My Goals',
-                    ...myGoals,
-                    'Shared with me',
-                    ...sharedWithMeGoals
-                  ];
-                  return ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      if (item is String) {
-                        return ListTile(
-                          title: Text(item, textScaler: const TextScaler.linear(2)),
-                        );
-                      } else if (item is GoalRecord) {
-                        return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          GoalScreen(goal: item, user: user)));
-                            },
-                            child: ListTile(
-                              title: Text(item.title),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () async {
-                                  try {
-                                    await GoalService()
-                                        .deleteGoal(id: item.id);
-                                  } catch (e) {
-                                    print(e);
-                                  }
-                                },
-                              ),
-                            ));
-                      } else {
-                        return const Center(
-                          child: Text("There was an error"),
-                        );
-                      }
-                    },
-                  );
+                  return MainGoalList(user: user, goals: snapshot.data!);
                 } else {
                   return const Center(
                     child: Text("There was an error"),
                   );
                 }
               },
-            )
-          ),
+            )),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             showModalBottomSheet(
@@ -105,7 +55,74 @@ class GoalsScreen extends StatelessWidget {
                 });
           },
           child: const Icon(Icons.add),
+        ));
+  }
+}
+
+class MainGoalList extends StatelessWidget {
+  const MainGoalList({
+    super.key,
+    required this.user,
+    required this.goals,
+  });
+
+  final UserRecord user;
+  final List<GoalRecord> goals;
+
+  @override
+  Widget build(BuildContext context) {
+    final myGoals = goals.where((element) => element.owner == user.id).toList();
+    final sharedWithMeGoals = goals
+        .where((element) => element.shareRecord.viewers.contains(user.id))
+        .toList();
+
+    final items = [
+      Row(children: [
+        const Text('My Goals', textScaler: TextScaler.linear(2)),
+        const Spacer(),
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            print('add a goal');
+          },
         )
+      ]),
+      ...myGoals.map((goalRecord) => GoalListItem(goal: goalRecord)),
+      const Row(children: [
+        Text('Shared with me', textScaler: TextScaler.linear(2)),
+      ]),
+      ...sharedWithMeGoals.map((goalRecord) => GoalListItem(goal: goalRecord)),
+    ];
+
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final widget = items[index];
+        return widget;
+      },
     );
+  }
+}
+
+class GoalListItem extends StatelessWidget {
+  const GoalListItem({super.key, required this.goal});
+
+  final GoalRecord goal;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: () {
+          print('navigate to goal screen');
+        },
+        child: ListTile(
+          title: Text(goal.title),
+          trailing: IconButton(
+            icon: const FaIcon(FontAwesomeIcons.ellipsisVertical),
+            onPressed: () async {
+              // show options
+            },
+          ),
+        ));
   }
 }
