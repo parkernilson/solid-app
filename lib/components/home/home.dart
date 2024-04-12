@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:solid_app/components/goals/goal_list_screen.dart';
+import 'package:solid_app/components/goals/dashboard_screen.dart';
 import 'package:solid_app/services/auth.dart';
 import 'package:solid_app/models/models.dart';
 import 'package:solid_app/shared/loading.dart';
@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
         } else if (snapshot.hasData) {
           return Provider<UserRecord>(
             create: (context) => snapshot.data!,
-            child: const GoalsScreen(),
+            child: const DashboardScreen(),
           );
         } else {
           return const LoginScreen();
