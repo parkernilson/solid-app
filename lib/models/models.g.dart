@@ -6,30 +6,7 @@ part of 'models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ShareRecord _$ShareRecordFromJson(Map<String, dynamic> json) => ShareRecord(
-      viewers: (json['viewers'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-    )
-      ..id = json['id'] as String
-      ..created = json['created'] as String
-      ..updated = json['updated'] as String
-      ..collectionId = json['collectionId'] as String
-      ..collectionName = json['collectionName'] as String;
-
-Map<String, dynamic> _$ShareRecordToJson(ShareRecord instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'created': instance.created,
-      'updated': instance.updated,
-      'collectionId': instance.collectionId,
-      'collectionName': instance.collectionName,
-      'viewers': instance.viewers,
-    };
-
-GoalRecord _$GoalRecordFromJson(Map<String, dynamic> json) =>
-    GoalRecord(
+GoalRecord _$GoalRecordFromJson(Map<String, dynamic> json) => GoalRecord(
       title: json['title'] as String? ?? '',
       owner: json['owner'] as String? ?? '',
     )
@@ -48,6 +25,32 @@ Map<String, dynamic> _$GoalRecordToJson(GoalRecord instance) =>
       'collectionName': instance.collectionName,
       'title': instance.title,
       'owner': instance.owner,
+    };
+
+SharedGoalRecord _$SharedGoalRecordFromJson(Map<String, dynamic> json) =>
+    SharedGoalRecord(
+      viewer: json['viewer'] as String? ?? '',
+      shareAccepted: json['shareAccepted'] as bool? ?? false,
+      title: json['title'] as String? ?? '',
+      owner: json['owner'] as String? ?? '',
+    )
+      ..id = json['id'] as String
+      ..created = json['created'] as String
+      ..updated = json['updated'] as String
+      ..collectionId = json['collectionId'] as String
+      ..collectionName = json['collectionName'] as String;
+
+Map<String, dynamic> _$SharedGoalRecordToJson(SharedGoalRecord instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'created': instance.created,
+      'updated': instance.updated,
+      'collectionId': instance.collectionId,
+      'collectionName': instance.collectionName,
+      'title': instance.title,
+      'owner': instance.owner,
+      'viewer': instance.viewer,
+      'shareAccepted': instance.shareAccepted,
     };
 
 EntryRecord _$EntryRecordFromJson(Map<String, dynamic> json) => EntryRecord(

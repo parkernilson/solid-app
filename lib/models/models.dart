@@ -4,49 +4,45 @@ import 'package:pocketbase/pocketbase.dart';
 part 'models.g.dart';
 
 @JsonSerializable()
-class ShareRecord extends RecordModel {
-  final List<String> viewers;
-
-  ShareRecord({this.viewers = const []}) : super();
-
-  factory ShareRecord.fromJson(Map<String, dynamic> json) =>
-      _$ShareRecordFromJson(json);
-  @override
-
-  factory ShareRecord.fromRecordModel(RecordModel record) =>
-      ShareRecord.fromJson(record.toJson());
-
-  Map<String, dynamic> toJson() => _$ShareRecordToJson(this);
-}
-
-@JsonSerializable()
 class GoalRecord extends RecordModel {
   final String title;
   final String owner;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  ShareRecord shareRecord;
-
   GoalRecord({
     this.title = '',
     this.owner = '',
-  })  : shareRecord = ShareRecord(),
-        super();
+  });
 
   factory GoalRecord.fromJson(Map<String, dynamic> json) =>
-      _$GoalRecordFromJson(json)
-        ..shareRecord = json['expand']?['share_record'] != null
-            ? ShareRecord.fromJson(json['expand']?['share_record'])
-            : ShareRecord();
+      _$GoalRecordFromJson(json);
 
   factory GoalRecord.fromRecordModel(RecordModel record) =>
       GoalRecord.fromJson(record.toJson());
 
   @override
-  Map<String, dynamic> toJson() => _$GoalRecordToJson(this)
-    ..['expand'] = {
-      'share_record': shareRecord.toJson(),
-    };
+  Map<String, dynamic> toJson() => _$GoalRecordToJson(this);
+}
+
+@JsonSerializable()
+class SharedGoalRecord extends GoalRecord {
+  final String viewer;
+  final bool shareAccepted;
+
+  SharedGoalRecord({
+    this.viewer = '',
+    this.shareAccepted = false,
+    super.title = '',
+    super.owner = '',
+  });
+
+  factory SharedGoalRecord.fromJson(Map<String, dynamic> json) =>
+      _$SharedGoalRecordFromJson(json);
+    
+  factory SharedGoalRecord.fromRecordModel(RecordModel record) =>
+      SharedGoalRecord.fromJson(record.toJson());
+
+  @override
+  Map<String, dynamic> toJson() => _$SharedGoalRecordToJson(this);
 }
 
 @JsonSerializable()

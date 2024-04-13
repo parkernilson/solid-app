@@ -8,18 +8,15 @@ class Dashboard extends StatelessWidget {
     super.key,
     required this.user,
     required this.goals,
+    required this.sharedGoals,
   });
 
   final UserRecord user;
   final List<GoalRecord> goals;
+  final List<SharedGoalRecord> sharedGoals;
 
   @override
   Widget build(BuildContext context) {
-    final myGoals = goals.where((element) => element.owner == user.id).toList();
-    final sharedWithMeGoals = goals
-        .where((element) => element.shareRecord.viewers.contains(user.id))
-        .toList();
-
     final items = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -37,8 +34,8 @@ class Dashboard extends StatelessWidget {
           )
         ],
       ),
-      ...myGoals.take(3).map((goalRecord) => GoalListItem(goal: goalRecord)),
-      myGoals.length > 3
+      ...goals.take(3).map((goalRecord) => GoalListItem(goal: goalRecord)),
+      goals.length > 3
           ? TextButton(
               onPressed: () {
                 // navigate to my goals
@@ -49,10 +46,10 @@ class Dashboard extends StatelessWidget {
       const Row(children: [
         Text('Shared with me', textScaler: TextScaler.linear(2)),
       ]),
-      ...sharedWithMeGoals
+      ...sharedGoals
           .take(3)
           .map((goalRecord) => GoalListItem(goal: goalRecord, editable: false)),
-      sharedWithMeGoals.length > 3
+      sharedGoals.length > 3
           ? TextButton(
               onPressed: () {
                 // navigate to shared goals

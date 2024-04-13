@@ -26,17 +26,24 @@ class DashboardScreen extends StatelessWidget {
         ),
         body: Container(
             padding: const EdgeInsets.all(30),
-            child: StreamBuilder(
-              stream: GoalService().getGoalsStream(),
+            child: FutureBuilder(
+              future: Future.wait([
+                GoalService().getGoals(userId: user.id),
+                GoalService().getSharedGoals()
+              ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const LoadingScreen();
                 } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text("There was an error"),
+                  return Center(
+                    child: Text(snapshot.error.toString()),
                   );
                 } else if (snapshot.hasData) {
-                  return Dashboard(user: user, goals: snapshot.data!);
+                  return Dashboard(
+                    user: user,
+                    goals: snapshot.data![0],
+                    sharedGoals: snapshot.data![1] as List<SharedGoalRecord>,
+                  );
                 } else {
                   return const Center(
                     child: Text("There was an error"),
