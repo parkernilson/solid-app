@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:solid_app/components/goals/create_goal_modal.dart';
 import 'package:solid_app/components/goals/dashboard.dart';
 import 'package:solid_app/models/models.dart';
@@ -12,7 +11,7 @@ class GoalsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = AuthService().user;
+    final user = AuthService().user!;
 
     return Scaffold(
         appBar: AppBar(
@@ -40,8 +39,7 @@ class GoalsScreen extends StatelessWidget {
                         showModalBottomSheet(
                             context: context,
                             builder: (context) {
-                              return const Text("temp");
-                              // return CreateGoalModal(user: user);
+                              return CreateGoalModal(user: user);
                             });
                       },
                     )
