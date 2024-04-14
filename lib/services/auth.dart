@@ -15,7 +15,6 @@ class AuthService {
           : null)
       .startWith(null);
 
-  // final otherStream = PocketBaseApp().pb.authStore.onChange.startWith(startValue)
   final user = PocketBaseApp().pb.authStore.model != null
       ? UserRecord.fromRecordModel(PocketBaseApp().pb.authStore.model)
       : null;
