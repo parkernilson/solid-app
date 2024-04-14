@@ -12,7 +12,7 @@ class GoalLists {
 
 class GoalService {
   late PocketBase client;
-  final _goalsStreamController = StreamController<GoalLists>();
+  StreamController<GoalLists> _goalsStreamController = StreamController<GoalLists>();
   List<GoalRecord> _goals = [];
   List<SharedGoalRecord> _sharedGoals = [];
 
@@ -33,6 +33,7 @@ class GoalService {
   }
 
   Stream<GoalLists> getGoalListsStream({String? userId}) async* {
+    _goalsStreamController = StreamController<GoalLists>();
     _goals = await getGoals(userId: userId);
     _sharedGoals = await getSharedGoals();
     _goalsStreamController

@@ -26,6 +26,7 @@ class GoalRecord extends RecordModel {
 @JsonSerializable()
 class SharedGoalRecord extends GoalRecord {
   final String viewer;
+  @JsonKey(name: 'share_accepted')
   final bool shareAccepted;
 
   SharedGoalRecord({

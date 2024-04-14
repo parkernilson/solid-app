@@ -4,16 +4,21 @@ import 'package:solid_app/components/goals/create_goal_modal.dart';
 import 'package:solid_app/models/models.dart';
 
 class Dashboard extends StatelessWidget {
-  const Dashboard({
+  final UserRecord user;
+  final List<GoalRecord> goals;
+  final List<SharedGoalRecord> sharedGoals;
+  final List<SharedGoalRecord> acceptedSharedGoals;
+  final List<SharedGoalRecord> unacceptedSharedGoals;
+
+  Dashboard({
     super.key,
     required this.user,
     required this.goals,
     required this.sharedGoals,
-  });
-
-  final UserRecord user;
-  final List<GoalRecord> goals;
-  final List<SharedGoalRecord> sharedGoals;
+  })  : acceptedSharedGoals =
+            sharedGoals.where((goal) => goal.shareAccepted).toList(),
+        unacceptedSharedGoals =
+            sharedGoals.where((goal) => !goal.shareAccepted).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +51,30 @@ class Dashboard extends StatelessWidget {
       const Row(children: [
         Text('Shared with me', textScaler: TextScaler.linear(2)),
       ]),
-      ...sharedGoals
+      unacceptedSharedGoals.isNotEmpty
+          ? Container(
+              color: Colors.red[100],
+              padding: const EdgeInsets.only(left: 8, right: 8),
+              child: Row(children: [
+                Flexible(
+                  child: Text(
+                      'You have ${unacceptedSharedGoals.length} requests to share calendars with you',
+                      textScaler: const TextScaler.linear(0.8)),
+                ),
+                TextButton(
+                  child: const Text('View'),
+                  onPressed: () {
+                    // navigate to shared goals
+                    print("navigate to share requests");
+                  },
+                )
+              ]),
+            )
+          : const SizedBox(),
+      ...acceptedSharedGoals
           .take(3)
           .map((goalRecord) => GoalListItem(goal: goalRecord, editable: false)),
-      sharedGoals.length > 3
+      acceptedSharedGoals.length > 3
           ? TextButton(
               onPressed: () {
                 // navigate to shared goals

@@ -30,7 +30,7 @@ Map<String, dynamic> _$GoalRecordToJson(GoalRecord instance) =>
 SharedGoalRecord _$SharedGoalRecordFromJson(Map<String, dynamic> json) =>
     SharedGoalRecord(
       viewer: json['viewer'] as String? ?? '',
-      shareAccepted: json['shareAccepted'] as bool? ?? false,
+      shareAccepted: json['share_accepted'] as bool? ?? false,
       title: json['title'] as String? ?? '',
       owner: json['owner'] as String? ?? '',
     )
@@ -50,7 +50,7 @@ Map<String, dynamic> _$SharedGoalRecordToJson(SharedGoalRecord instance) =>
       'title': instance.title,
       'owner': instance.owner,
       'viewer': instance.viewer,
-      'shareAccepted': instance.shareAccepted,
+      'share_accepted': instance.shareAccepted,
     };
 
 EntryRecord _$EntryRecordFromJson(Map<String, dynamic> json) => EntryRecord(
