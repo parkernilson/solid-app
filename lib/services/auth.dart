@@ -7,7 +7,7 @@ import 'dart:async';
 class AuthService {
   final BehaviorSubject<UserRecord?> userSubject =
       BehaviorSubject<UserRecord?>.seeded(null);
-
+  
   AuthService._internal() {
     PocketBaseApp().pb.authStore.onChange.listen((event) {
       if (event.model is RecordModel) {

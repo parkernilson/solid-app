@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:solid_app/components/goals/create_goal_modal.dart';
+import 'package:solid_app/components/goals/goals_screen.dart';
 import 'package:solid_app/models/models.dart';
 
 class Dashboard extends StatelessWidget {
@@ -42,10 +43,15 @@ class Dashboard extends StatelessWidget {
       ...goals.take(3).map((goalRecord) => GoalListItem(goal: goalRecord)),
       goals.length > 3
           ? TextButton(
-              onPressed: () {
-                // navigate to my goals
-              },
               child: const Text('View all'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        GoalsScreen(goals: goals),
+                  ),
+                );
+              },
             )
           : const SizedBox(),
       const Row(children: [
