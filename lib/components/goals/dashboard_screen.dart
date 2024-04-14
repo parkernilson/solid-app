@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:solid_app/components/goals/dashboard.dart';
 import 'package:solid_app/services/auth.dart';
 import 'package:solid_app/services/goals.dart';
-import 'package:solid_app/models/models.dart';
-import 'package:provider/provider.dart';
 import 'package:solid_app/shared/loading.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -11,7 +9,7 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UserRecord>();
+    final user = AuthService().user!;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Solid'),

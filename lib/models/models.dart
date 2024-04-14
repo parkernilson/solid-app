@@ -92,6 +92,10 @@ class UserRecord extends RecordModel {
 
   factory UserRecord.fromJson(Map<String, dynamic> json) =>
       _$UserRecordFromJson(json);
+  
+  factory UserRecord.fromRecordModel(RecordModel record) =>
+      UserRecord.fromJson(record.toJson());
+
   @override
   Map<String, dynamic> toJson() => _$UserRecordToJson(this);
 }

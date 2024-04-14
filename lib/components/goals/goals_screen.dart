@@ -12,7 +12,7 @@ class GoalsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final user = context.watch<UserRecord>();
+    final user = AuthService().user;
 
     return Scaffold(
         appBar: AppBar(
