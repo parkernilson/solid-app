@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solid_app/components/goals/create_entry_modal.dart';
+import 'package:solid_app/components/goals/share_goal_modal.dart';
 import 'package:solid_app/models/models.dart';
 import 'package:solid_app/services/auth.dart';
 import 'package:solid_app/services/entries.dart';
@@ -69,6 +70,26 @@ class GoalPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(goal.title),
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'share') {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return ShareGoalModal(user: user, goal: goal);
+                    },
+                  );
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'share',
+                  child: Text('Share'),
+                ),
+              ],
+            ),
+          ],
         ),
         body: Column(
           children: [

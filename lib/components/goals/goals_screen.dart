@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solid_app/components/goals/create_goal_modal.dart';
 import 'package:solid_app/components/goals/dashboard.dart';
-import 'package:solid_app/models/models.dart';
 import 'package:solid_app/services/auth.dart';
 import 'package:solid_app/services/goals.dart';
 import 'package:solid_app/shared/loading.dart';

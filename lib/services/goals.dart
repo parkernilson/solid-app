@@ -71,10 +71,11 @@ class GoalService {
     _goalsStreamController?.add(GoalLists(goals: _goals, sharedGoals: _sharedGoals));
   }
 
-  Future<void> shareGoal({required String goalId, required String userId}) async {
+  Future<void> shareGoal({required String goalId, required String email}) async {
+    final shareWithUser = await client.collection('users').getFirstListItem("email = '$email'");
     await client.collection('share_records').create(body: {
       'goal': goalId,
-      'viewer': userId,
+      'viewer': shareWithUser.id,
       'accepted': false,
     });
   }
