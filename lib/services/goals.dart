@@ -74,5 +74,7 @@ class GoalService {
 
   Future<void> deleteGoal({required String id}) async {
     await client.collection('goals').delete(id);
+    _goals.removeWhere((element) => element.id == id);
+    _goalsStreamController.add(GoalLists(goals: _goals, sharedGoals: _sharedGoals));
   }
 }

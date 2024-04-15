@@ -25,7 +25,7 @@ class CreateEntryModal extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               try {
-                await EntryService.instance.createEntry(
+                await EntryService().createEntry(
                     textContent: contentController.text, goal: goal.id);
                 if (context.mounted) Navigator.pop(context);
               } catch (e) {

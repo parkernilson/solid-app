@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:solid_app/components/goals/create_goal_modal.dart';
+import 'package:solid_app/components/goals/goal_screen.dart';
 import 'package:solid_app/components/goals/goals_screen.dart';
 import 'package:solid_app/models/models.dart';
 
@@ -48,7 +49,7 @@ class Dashboard extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) =>
-                        GoalsScreen(goals: goals),
+                        const GoalsScreen(),
                   ),
                 );
               },
@@ -110,7 +111,11 @@ class GoalListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          print('navigate to goal screen');
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) => GoalScreen(goalId: goal.id),
+            ),
+          );
         },
         child: ListTile(
           title: Text(goal.title),

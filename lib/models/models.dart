@@ -48,25 +48,23 @@ class SharedGoalRecord extends GoalRecord {
 
 @JsonSerializable()
 class EntryRecord extends RecordModel {
-  // final String title;
-  // final DateTime date;
+  final String title;
   @JsonKey(name: 'text_content')
   final String textContent;
   final String goal;
 
-  // EntryRecord({
-  //   this.title = '',
-  //   DateTime? date,
-  //   this.textContent = '',
-  // }) : date = date ?? DateTime.now(), super();
   EntryRecord({
-    // this.title = '',
+    this.title = '',
     this.textContent = '',
     this.goal = '',
-  }) : super();
+  });
 
   factory EntryRecord.fromJson(Map<String, dynamic> json) =>
       _$EntryRecordFromJson(json);
+
+  factory EntryRecord.fromRecordModel(RecordModel record) =>
+      EntryRecord.fromJson(record.toJson());
+
   @override
   Map<String, dynamic> toJson() => _$EntryRecordToJson(this);
 
@@ -74,6 +72,8 @@ class EntryRecord extends RecordModel {
       ? DateFormat(DateFormat.ABBR_MONTH_WEEKDAY_DAY)
           .format(DateTime.tryParse(created)!)
       : 'Invalid date';
+
+  DateTime get createdDate => DateTime.tryParse(created) ?? DateTime.now();
 }
 
 @JsonSerializable()
