@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:solid_app/models/models.dart';
 import 'package:solid_app/services/pocketbase/pocketbase.dart';
+import 'package:rxdart/rxdart.dart';
 
 class GoalLists {
   final List<GoalRecord> goals;
@@ -12,7 +13,7 @@ class GoalLists {
 
 class GoalService {
   late PocketBase client;
-  StreamController<GoalLists> _goalsStreamController = StreamController<GoalLists>();
+  StreamController<GoalLists>? _goalsStreamController;
   List<GoalRecord> _goals = [];
   List<SharedGoalRecord> _sharedGoals = [];
 
@@ -33,12 +34,10 @@ class GoalService {
   }
 
   Stream<GoalLists> getGoalListsStream({String? userId}) async* {
-    _goalsStreamController = StreamController<GoalLists>();
     _goals = await getGoals(userId: userId);
     _sharedGoals = await getSharedGoals();
-    _goalsStreamController
-        .add(GoalLists(goals: _goals, sharedGoals: _sharedGoals));
-    yield* _goalsStreamController.stream;
+    _goalsStreamController ??= StreamController<GoalLists>.broadcast();
+    yield* _goalsStreamController!.stream.startWith(GoalLists(goals: _goals, sharedGoals: _sharedGoals));
   }
 
   Future<List<SharedGoalRecord>> getSharedGoals() async {
@@ -61,20 +60,36 @@ class GoalService {
         .create(body: {'title': title, 'owner': owner});
 
     final newGoalRecord = GoalRecord.fromRecordModel(result);
-    _goalsStreamController.add(GoalLists(
+    _goalsStreamController?.add(GoalLists(
         goals: _goals..add(newGoalRecord), sharedGoals: _sharedGoals));
     return newGoalRecord;
-  }
-
-  Future<GoalRecord> updateGoal(
-      {required String id, required Map<String, dynamic> body}) async {
-    final result = await client.collection('goals').update(id, body: body);
-    return GoalRecord.fromRecordModel(result);
   }
 
   Future<void> deleteGoal({required String id}) async {
     await client.collection('goals').delete(id);
     _goals.removeWhere((element) => element.id == id);
-    _goalsStreamController.add(GoalLists(goals: _goals, sharedGoals: _sharedGoals));
+    _goalsStreamController?.add(GoalLists(goals: _goals, sharedGoals: _sharedGoals));
+  }
+
+  Future<void> shareGoal({required String goalId, required String userId}) async {
+    await client.collection('share_records').create(body: {
+      'goal': goalId,
+      'viewer': userId,
+      'accepted': false,
+    });
+  }
+
+  Future<void> acceptShareRequest({required String goalId}) async {
+    final shareRecord = await client.collection('share_records').getFirstListItem("goal = '$goalId'");
+    await client.collection('share_records').update(shareRecord.id, body: {'accepted': true});
+    _sharedGoals.firstWhere((goal) => goal.id == goalId).shareAccepted = true;
+    _goalsStreamController?.add(GoalLists(goals: _goals, sharedGoals: _sharedGoals));
+  }
+
+  Future<void> rejectShareRequest({required String goalId}) async {
+    final shareRecord = await client.collection('share_records').getFirstListItem("goal = '$goalId'");
+    await client.collection('share_records').delete(shareRecord.id);
+    _sharedGoals.removeWhere((goal) => goal.id == goalId);
+    _goalsStreamController?.add(GoalLists(goals: _goals, sharedGoals: _sharedGoals));
   }
 }

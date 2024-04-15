@@ -27,7 +27,7 @@ class GoalRecord extends RecordModel {
 class SharedGoalRecord extends GoalRecord {
   final String viewer;
   @JsonKey(name: 'share_accepted')
-  final bool shareAccepted;
+  bool shareAccepted;
 
   SharedGoalRecord({
     this.viewer = '',
