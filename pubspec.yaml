@@ -75,7 +75,9 @@ flutter:
       fonts:
         - asset: assets/OpenSans-Bold.ttf
   assets:
-    - assets/solid_logo.svg
+    - assets/images/solid_logo.png
+    - assets/images/mountains.svg
+    - assets/images/mountains.png
     - .env
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
