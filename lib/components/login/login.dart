@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:solid_app/services/auth.dart';
+import 'package:solid_app/services/errors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -117,7 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             emailController.text, passwordController.text);
                       }
                     } catch (e) {
-                      print(e);
+                      ErrorService().reportError(e);
+                      if (context.mounted) ErrorService().alertUser(context, e);
                     }
                   },
                   child: const Text('Login')),
