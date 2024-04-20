@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:solid_app/components/goals/create_entry_modal.dart';
 import 'package:solid_app/components/goals/share_goal_modal.dart';
-import 'package:solid_app/models/models.dart';
+import 'package:solid_app/models/entry_record.dart';
+import 'package:solid_app/models/goal_record.dart';
+import 'package:solid_app/models/user_record.dart';
 import 'package:solid_app/services/auth.dart';
 import 'package:solid_app/services/entries.dart';
 import 'package:solid_app/services/goals.dart';

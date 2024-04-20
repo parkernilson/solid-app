@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:solid_app/models/user_record.dart';
 import 'package:solid_app/services/goals.dart';
-import 'package:solid_app/models/models.dart';
 
 class CreateGoalModal extends StatelessWidget {
   final UserRecord user;

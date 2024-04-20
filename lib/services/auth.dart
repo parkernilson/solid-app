@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:pocketbase/pocketbase.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:solid_app/models/models.dart';
+import 'package:solid_app/models/user_record.dart';
 import 'package:solid_app/services/pocketbase/pocketbase.dart';
 
 class AuthService {

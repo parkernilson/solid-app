@@ -4,7 +4,9 @@ import 'package:solid_app/components/goals/create_goal_modal.dart';
 import 'package:solid_app/components/goals/goal_screen.dart';
 import 'package:solid_app/components/goals/goals_screen.dart';
 import 'package:solid_app/components/goals/share_requests_screen.dart';
-import 'package:solid_app/models/models.dart';
+import 'package:solid_app/models/goal_record.dart';
+import 'package:solid_app/models/shared_goal_record.dart';
+import 'package:solid_app/models/user_record.dart';
 
 class Dashboard extends StatelessWidget {
   final UserRecord user;

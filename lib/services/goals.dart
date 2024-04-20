@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:pocketbase/pocketbase.dart';
-import 'package:solid_app/models/models.dart';
+import 'package:solid_app/models/goal_record.dart';
+import 'package:solid_app/models/shared_goal_record.dart';
 import 'package:solid_app/services/pocketbase/pocketbase.dart';
 import 'package:rxdart/rxdart.dart';
 

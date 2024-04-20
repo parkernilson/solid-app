@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:pocketbase/pocketbase.dart';
+import 'package:solid_app/models/entry_record.dart';
 import 'package:solid_app/services/pocketbase/pocketbase.dart';
-import 'package:solid_app/models/models.dart';
 
 class EntryService {
   late PocketBase client;
