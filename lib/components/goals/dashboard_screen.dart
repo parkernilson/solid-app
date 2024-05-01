@@ -10,41 +10,27 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = AuthService().user!;
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Solid'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () {
-                AuthService().logout();
-              },
-            )
-          ],
-        ),
-        body: Container(
-            padding: const EdgeInsets.all(30),
-            child: StreamBuilder(
-              stream: GoalService().getGoalListsStream(userId: user.id),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const LoadingScreen();
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(snapshot.error.toString()),
-                  );
-                } else if (snapshot.hasData) {
-                  return Dashboard(
-                    user: user,
-                    goals: snapshot.data!.goals,
-                    sharedGoals: snapshot.data!.sharedGoals,
-                  );
-                } else {
-                  return const Center(
-                    child: Text("There was an error"),
-                  );
-                }
-              },
-            )));
+    return StreamBuilder(
+      stream: GoalService().getGoalPreviewsStream(userId: user.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingScreen();
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        } else if (snapshot.hasData) {
+          return Dashboard(
+            user: user,
+            goalPreviews: snapshot.data!.goalsPreviews,
+            sharedGoalPreviews: snapshot.data!.sharedGoalPreviews,
+          );
+        } else {
+          return const Center(
+            child: Text("There was an error"),
+          );
+        }
+      },
+    );
   }
 }

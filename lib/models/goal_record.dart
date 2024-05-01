@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:solid_app/models/entry_record.dart';
+import 'package:solid_app/models/goal_record.dart';
 
 part 'goal_record.g.dart';
 
@@ -21,4 +23,24 @@ class GoalRecord extends RecordModel {
 
   @override
   Map<String, dynamic> toJson() => _$GoalRecordToJson(this);
+}
+
+class GoalPreviewData {
+  final List<EntryRecord> entries;
+  final int streak;
+
+  GoalPreviewData({
+    required this.entries,
+    required this.streak,
+  });
+}
+
+class GoalPreview<T extends GoalRecord> {
+  final T goal;
+  final GoalPreviewData previewData;
+
+  GoalPreview({
+    required this.goal,
+    required this.previewData,
+  });
 }

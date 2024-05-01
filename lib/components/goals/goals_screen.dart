@@ -27,7 +27,7 @@ class GoalsScreen extends StatelessWidget {
         body: Container(
             padding: const EdgeInsets.all(30),
             child: StreamBuilder(
-                stream: GoalService().getGoalListsStream(userId: user.id),
+                stream: GoalService().getGoalPreviewsStream(userId: user.id),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const LoadingScreen();
@@ -36,7 +36,7 @@ class GoalsScreen extends StatelessWidget {
                       child: Text(snapshot.error.toString()),
                     );
                   } else if (snapshot.hasData) {
-                    final goals = snapshot.data!.goals;
+                    final goalPreviews = snapshot.data!.goalsPreviews;
                     return Column(
                       children: [
                         Row(
@@ -56,8 +56,8 @@ class GoalsScreen extends StatelessWidget {
                             )
                           ],
                         ),
-                        ...goals.map(
-                            (goalRecord) => GoalListItem(goal: goalRecord)),
+                        ...goalPreviews.map(
+                            (goalPreview) => GoalListItem(goalPreview: goalPreview)),
                       ],
                     );
                   } else {

@@ -1,139 +1,286 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:solid_app/components/goals/create_goal_modal.dart';
 import 'package:solid_app/components/goals/goal_screen.dart';
-import 'package:solid_app/components/goals/goals_screen.dart';
 import 'package:solid_app/components/goals/share_requests_screen.dart';
+import 'package:solid_app/components/login/profile_screen.dart';
+import 'package:solid_app/models/entry_record.dart';
 import 'package:solid_app/models/goal_record.dart';
 import 'package:solid_app/models/shared_goal_record.dart';
 import 'package:solid_app/models/user_record.dart';
+import 'package:solid_app/shared/dates.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   final UserRecord user;
-  final List<GoalRecord> goals;
-  final List<SharedGoalRecord> sharedGoals;
-  final List<SharedGoalRecord> acceptedSharedGoals;
-  final List<SharedGoalRecord> unacceptedSharedGoals;
+  final List<GoalPreview> goalPreviews;
+  final List<GoalPreview<SharedGoalRecord>> sharedGoalPreviews;
+
+  final List<GoalPreview> acceptedSharedGoalPreviews;
+  final List<GoalPreview> unacceptedSharedGoalPreviews;
 
   Dashboard({
     super.key,
     required this.user,
-    required this.goals,
-    required this.sharedGoals,
-  })  : acceptedSharedGoals =
-            sharedGoals.where((goal) => goal.shareAccepted).toList(),
-        unacceptedSharedGoals =
-            sharedGoals.where((goal) => !goal.shareAccepted).toList();
+    required this.goalPreviews,
+    required this.sharedGoalPreviews,
+  })  : acceptedSharedGoalPreviews = sharedGoalPreviews
+            .where((goalPreview) => goalPreview.goal.shareAccepted)
+            .toList(),
+        unacceptedSharedGoalPreviews = sharedGoalPreviews
+            .where((goalPreview) => goalPreview.goal.shareAccepted == false)
+            .toList();
+
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+enum FilterMode { all, mine, shared }
+
+class _DashboardState extends State<Dashboard> {
+  FilterMode filterMode = FilterMode.all;
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text('My Goals', textScaler: TextScaler.linear(2)),
+    List<GoalPreview> filteredGoalPreviews = ((filterMode == FilterMode.all ||
+                    filterMode == FilterMode.mine
+                ? widget.goalPreviews
+                : List<GoalPreview>.empty())
+            .toSet()
+          ..addAll(
+              (filterMode == FilterMode.all || filterMode == FilterMode.shared
+                  ? widget.sharedGoalPreviews
+                  : List<GoalPreview>.empty())))
+        .toList()
+      ..sort((previewA, previewB) =>
+          previewB.previewData.streak - previewA.previewData.streak);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Image.asset(
+          'assets/images/solid_logo.png',
+          height: 32,
+        ),
+        centerTitle: false,
+        actions: [
           IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return CreateGoalModal(user: user);
-                  });
-            },
-          )
-        ],
-      ),
-      ...goals.take(3).map((goalRecord) => GoalListItem(goal: goalRecord)),
-      goals.length > 3
-          ? TextButton(
-              child: const Text('View all'),
+              icon: FaIcon(FontAwesomeIcons.solidCircleUser,
+                  color: Theme.of(context).colorScheme.onPrimary),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        const GoalsScreen(),
+                    builder: (BuildContext context) => const ProfileScreen(),
                   ),
                 );
-              },
-            )
-          : const SizedBox(),
-      const Row(children: [
-        Text('Shared with me', textScaler: TextScaler.linear(2)),
-      ]),
-      unacceptedSharedGoals.isNotEmpty
-          ? Container(
-              color: Colors.red[100],
-              padding: const EdgeInsets.only(left: 8, right: 8),
-              child: Row(children: [
-                Flexible(
-                  child: Text(
-                      'You have ${unacceptedSharedGoals.length} requests to share calendars with you',
-                      textScaler: const TextScaler.linear(0.8)),
-                ),
-                TextButton(
-                  child: const Text('View'),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            const ShareRequestsScreen(),
-                      )
-                    );
-                  },
-                )
+              })
+        ],
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      body: Column(
+        children: [
+          Container(
+              height: 128,
+              padding: const EdgeInsets.all(12),
+              width: double.infinity,
+              color: Theme.of(context).colorScheme.primary,
+              child: Text("Tasks",
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary))),
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Column(children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                const Text('Goals'),
+                widget.unacceptedSharedGoalPreviews.isNotEmpty
+                    ? ShareRequestsButton(
+                        count: widget.unacceptedSharedGoalPreviews.length)
+                    : const SizedBox()
               ]),
-            )
-          : const SizedBox(),
-      ...acceptedSharedGoals
-          .take(3)
-          .map((goalRecord) => GoalListItem(goal: goalRecord, editable: false)),
-      acceptedSharedGoals.length > 3
-          ? TextButton(
-              onPressed: () {
-                // navigate to shared goals
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                FilterButton(
+                    onPressed: () =>
+                        setState(() => filterMode = FilterMode.all),
+                    name: 'All',
+                    selected: filterMode == FilterMode.all),
+                FilterButton(
+                    onPressed: () =>
+                        setState(() => filterMode = FilterMode.mine),
+                    name: 'Mine',
+                    selected: filterMode == FilterMode.mine),
+                FilterButton(
+                    onPressed: () =>
+                        setState(() => filterMode = FilterMode.shared),
+                    name: 'Shared',
+                    selected: filterMode == FilterMode.shared),
+              ])
+            ]),
+          ),
+          Flexible(
+            child: ListView.builder(
+              itemCount: filteredGoalPreviews.length,
+              padding: const EdgeInsets.all(12),
+              itemBuilder: (context, index) {
+                final goalPreview = filteredGoalPreviews[index];
+                return GoalListItem(goalPreview: goalPreview);
               },
-              child: const Text('View all'),
-            )
-          : const SizedBox(),
-    ];
-
-    return ListView.builder(
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final widget = items[index];
-        return widget;
-      },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class GoalListItem extends StatelessWidget {
-  const GoalListItem({super.key, required this.goal, this.editable = true});
+class FilterButton extends StatelessWidget {
+  const FilterButton(
+      {super.key,
+      required this.onPressed,
+      required this.name,
+      required this.selected});
 
-  final GoalRecord goal;
+  final Function() onPressed;
+  final String name;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+        onPressed: onPressed,
+        style: ButtonStyle(
+            foregroundColor: MaterialStatePropertyAll(
+                Theme.of(context).colorScheme.onSecondaryContainer),
+            backgroundColor: MaterialStatePropertyAll<Color?>(selected
+                ? Theme.of(context).colorScheme.secondaryContainer
+                : null),
+            shape: const MaterialStatePropertyAll(RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8))))),
+        child: Text(name));
+  }
+}
+
+class GoalListItem extends StatelessWidget {
+  const GoalListItem(
+      {super.key, required this.goalPreview, this.editable = true});
+
+  final GoalPreview goalPreview;
   final bool editable;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext context) => GoalScreen(goalId: goal.id),
-            ),
-          );
-        },
-        child: ListTile(
-          title: Text(goal.title),
-          trailing: editable
-              ? IconButton(
+    return Container(
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(top: 20),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: const [
+            BoxShadow(
+                blurRadius: 6,
+                offset: Offset(0, 3),
+                color: Color.fromARGB(40, 0, 0, 0))
+          ],
+          color: Colors.white),
+      child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    GoalScreen(goalId: goalPreview.goal.id),
+              ),
+            );
+          },
+          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text(goalPreview.goal.title,
+                  style: const TextStyle(fontSize: 20)),
+              Row(children: [
+                goalPreview.previewData.streak > 0
+                    ? Container(
+                        padding: const EdgeInsets.only(
+                            top: 4, bottom: 4, left: 8, right: 8),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.tertiary,
+                            borderRadius: BorderRadius.circular(100)),
+                        child: Row(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(right: 3),
+                              child: FaIcon(FontAwesomeIcons.fireFlameCurved,
+                                  size: 16,
+                                  color:
+                                      Theme.of(context).colorScheme.onTertiary),
+                            ),
+                            Text("${goalPreview.previewData.streak}",
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onTertiary))
+                          ],
+                        ))
+                    : const SizedBox.shrink(),
+                IconButton(
                   icon: const FaIcon(FontAwesomeIcons.ellipsisVertical),
-                  onPressed: () async {
-                    // show options
+                  onPressed: () {
+                    // TODO: open options
                   },
                 )
-              : null,
-        ));
+              ])
+            ]),
+            Row(
+                children: List.generate(7, (i) {
+              final today = DateTime.now();
+              final date = today.subtract(Duration(days: i));
+              EntryRecord? correspondingEntry;
+              try {
+                correspondingEntry = goalPreview.previewData.entries.firstWhere((entry) => sameDay(entry.date, date));
+              // ignore: empty_catches
+              } on StateError {}
+              final color = correspondingEntry != null && correspondingEntry.checked ? Colors.green[50] : Colors.grey[300];
+              return Container(
+                  padding: const EdgeInsets.all(4),
+                  margin: const EdgeInsets.only(right: 4),
+                  width: 24,
+                  height: 24,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(100)),
+                  ),
+                  child: Text(getWeekdayName(date.weekday)));
+            }, growable: false)
+                    .reversed
+                    .toList())
+          ])),
+    );
+  }
+}
+
+class ShareRequestsButton extends StatelessWidget {
+  const ShareRequestsButton({super.key, required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const ShareRequestsScreen()));
+        },
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+              padding: const EdgeInsets.only(right: 8),
+              child: Text('$count share requests')),
+          Text('View',
+              style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+        ]),
+      ),
+    );
   }
 }

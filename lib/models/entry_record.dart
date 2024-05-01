@@ -9,11 +9,16 @@ class EntryRecord extends RecordModel {
   final String title;
   @JsonKey(name: 'text_content')
   final String textContent;
+  final bool checked;
+  @JsonKey(name: 'date')
+  final String dateString;
   final String goal;
 
   EntryRecord({
     this.title = '',
     this.textContent = '',
+    this.checked = false,
+    this.dateString = '',
     this.goal = '',
   });
 
@@ -26,10 +31,11 @@ class EntryRecord extends RecordModel {
   @override
   Map<String, dynamic> toJson() => _$EntryRecordToJson(this);
 
-  String get dateFormatted => DateTime.tryParse(created) is DateTime
+  String get dateFormatted => DateTime.tryParse(dateString) is DateTime
       ? DateFormat(DateFormat.ABBR_MONTH_WEEKDAY_DAY)
-          .format(DateTime.tryParse(created)!)
+          .format(DateTime.tryParse(dateString)!)
       : 'Invalid date';
 
+  DateTime get date => DateTime.tryParse(dateString) ?? createdDate;
   DateTime get createdDate => DateTime.tryParse(created) ?? DateTime.now();
 }
