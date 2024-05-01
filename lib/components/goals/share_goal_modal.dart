@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:solid_app/models/goal_record.dart';
 import 'package:solid_app/models/user_record.dart';
 import 'package:solid_app/services/goals.dart';
 
-class CreateGoalModal extends StatelessWidget {
+class ShareGoalModal extends StatelessWidget {
   final UserRecord user;
+  final GoalRecord goal;
 
-  const CreateGoalModal({super.key, required this.user});
+  const ShareGoalModal({super.key, required this.user, required this.goal});
 
   @override
   Widget build(BuildContext context) {
-    final titleController = TextEditingController();
+    final emailController = TextEditingController();
     return Container(
       padding: const EdgeInsets.all(30),
       child: Column(
         children: [
-          const Text('Create Goal'),
+          const Text('Share Goal'),
           TextFormField(
-            controller: titleController,
+            controller: emailController,
             decoration: const InputDecoration(
-              labelText: 'Title',
+              labelText: 'Share with email',
             ),
           ),
           ElevatedButton(
             onPressed: () async {
               try {
-                await GoalService().createGoal(
-                    title: titleController.text, owner: user.id);
+                await GoalService().shareGoal(
+                  email: emailController.text,
+                  goalId: goal.id
+                );
                 if (context.mounted) Navigator.pop(context);
               } catch (e) {
                 print(e);

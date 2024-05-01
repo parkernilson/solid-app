@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:solid_app/models/goal_record.dart';
+import 'package:solid_app/models/user_record.dart';
 import 'package:solid_app/services/entries.dart';
-import 'package:solid_app/models/models.dart';
 
 class CreateEntryModal extends StatelessWidget {
   final UserRecord user;
@@ -25,7 +26,7 @@ class CreateEntryModal extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               try {
-                await EntryService.instance.createEntry(
+                await EntryService().createEntry(
                     textContent: contentController.text, goal: goal.id);
                 if (context.mounted) Navigator.pop(context);
               } catch (e) {
