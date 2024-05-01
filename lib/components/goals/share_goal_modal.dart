@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:solid_app/services/calendars.dart';
-import 'package:solid_app/services/models/models.dart';
+import 'package:solid_app/models/goal_record.dart';
+import 'package:solid_app/models/user_record.dart';
+import 'package:solid_app/services/goals.dart';
 
-class CreateCalendarModal extends StatelessWidget {
+class ShareGoalModal extends StatelessWidget {
   final UserRecord user;
+  final GoalRecord goal;
 
-  const CreateCalendarModal({super.key, required this.user});
+  const ShareGoalModal({super.key, required this.user, required this.goal});
 
   @override
   Widget build(BuildContext context) {
-    final titleController = TextEditingController();
+    final emailController = TextEditingController();
     return Container(
       padding: const EdgeInsets.all(30),
       child: Column(
         children: [
-          const Text('Create Calendar'),
+          const Text('Share Goal'),
           TextFormField(
-            controller: titleController,
+            controller: emailController,
             decoration: const InputDecoration(
-              labelText: 'Title',
+              labelText: 'Share with email',
             ),
           ),
           ElevatedButton(
             onPressed: () async {
               try {
-                await CalendarService().createCalendar(
-                    title: titleController.text, owner: user.id);
+                await GoalService().shareGoal(
+                  email: emailController.text,
+                  goalId: goal.id
+                );
                 if (context.mounted) Navigator.pop(context);
               } catch (e) {
                 print(e);
